@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.urlspace.backend.model.TrafficAlert;
 import com.urlspace.backend.model.UrlAnalytics;
+import com.urlspace.backend.repository.TrafficAlertRepository;
 import com.urlspace.backend.repository.UrlAnalyticsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +18,10 @@ import lombok.RequiredArgsConstructor;
 public class AnalyticsService {
 
     private final UrlAnalyticsRepository analyticsRepository;
+    private final TrafficAlertRepository alertRepository;
     private final RedisTemplate<String, String> redisTemplate;
+
+    private static final int ALERT_THRESHOLD = 5;
 
     public void logClick(String shortCode, String ip) {
 
@@ -28,9 +33,9 @@ public class AnalyticsService {
             redisTemplate.expire(rateKey, Duration.ofMinutes(1));
         }
 
-        if (count > 5) {
-            System.out.println(" ALERT: High traffic detected for " + shortCode);
-        }
+        // if (count > 5) {
+        // System.out.println(" ALERT: High traffic detected for " + shortCode);
+        // }
 
         UrlAnalytics analytics = UrlAnalytics.builder()
                 .shortCode(shortCode)
@@ -39,6 +44,22 @@ public class AnalyticsService {
                 .build();
 
         analyticsRepository.save(analytics);
+
+        // Trigger real alert
+        if (count > ALERT_THRESHOLD) {
+            createAlert(shortCode, count);
+        }
+    }
+
+    private void createAlert(String shortCode, Long count) {
+
+        TrafficAlert alert = TrafficAlert.builder()
+                .shortCode(shortCode)
+                .clickCount(count)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        alertRepository.save(alert);
     }
 
 }

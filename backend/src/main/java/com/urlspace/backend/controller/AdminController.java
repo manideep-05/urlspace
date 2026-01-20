@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.urlspace.backend.repository.TrafficAlertRepository;
 import com.urlspace.backend.repository.UrlRepository;
 import com.urlspace.backend.repository.UserRepository;
 import com.urlspace.backend.service.UserService;
@@ -21,6 +22,7 @@ public class AdminController {
     private final UserRepository userRepository;
     private final UrlRepository urlRepository;
     private final UserService userService;
+    private final TrafficAlertRepository alertRepository;
 
     private void validateAdmin(String email) {
         if (!userService.getUserRole(email).equals("ADMIN")) {
@@ -49,6 +51,13 @@ public class AdminController {
         // urlRepository.deleteById(Long.parseLong(code));
         urlRepository.findByShortCode(code).ifPresent(urlRepository::delete);
         return "URL Deleted Successfully";
+    }
+
+    @GetMapping("/alerts")
+    public Object getTrafficAlerts(HttpServletRequest request) {
+        String email = (String) request.getAttribute("email");
+        validateAdmin(email);
+        return alertRepository.findAll();
     }
 
 }
