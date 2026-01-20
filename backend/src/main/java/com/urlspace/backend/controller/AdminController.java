@@ -1,5 +1,6 @@
 package com.urlspace.backend.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,8 +42,7 @@ public class AdminController {
         return urlRepository.findAll();
     }
 
-    @DeleteMapping("/url/{code}"){
-
+    @DeleteMapping("/url/{code}")
     public String deleteUrl(@PathVariable String code, HttpServletRequest httpRequest) {
         String email = (String) httpRequest.getAttribute("email");
         validateAdmin(email);
