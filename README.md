@@ -125,31 +125,31 @@ npm run dev
 
 ### API Highlights
 
-POST /auth/register
-POST /auth/login
-POST /url/shorten
-GET /{shortCode}
-GET /url/my
-GET /analytics/\*
-GET /admin/alerts (ADMIN only)
+- POST /auth/register
+- POST /auth/login
+- POST /url/shorten
+- GET /{shortCode}
+- GET /url/my
+- GET /analytics/\*
+- GET /admin/alerts (ADMIN only)
 
 ---
 
 ### Key Engineering Concepts Demonstrated
 
-Database-level correctness guarantees
-Handling race conditions & retries
-Event-driven design
-Async background processing
-Cache consistency
-Real-time systems using WebSockets
+- Database-level correctness guarantees
+- Handling race conditions & retries
+- Event-driven design
+- Async background processing
+- Cache consistency
+- Real-time systems using WebSockets
 
 ---
 
 ### Future Improvements
 
-Docker Compose
-Email/SMS integration
-OAuth2 / SSO
-Distributed ID generation
-Advanced analytics filters
+- Docker Compose
+- Email/SMS integration
+- OAuth2 / SSO
+- Distributed ID generation
+- Advanced analytics filters
