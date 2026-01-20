@@ -12,6 +12,7 @@ import com.urlspace.backend.model.User;
 import com.urlspace.backend.repository.UserRepository;
 import com.urlspace.backend.security.JwtUtil;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,7 +24,7 @@ public class AuthController {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest req) {
+    public String register(@Valid @RequestBody RegisterRequest req) {
         User user = User.builder()
                 .email(req.getEmail())
                 .password(passwordEncoder.encode(req.getPassword()))
@@ -35,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest req) {
+    public String login(@Valid @RequestBody LoginRequest req) {
         User user = userRepository.findByEmail(req.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email"));
 

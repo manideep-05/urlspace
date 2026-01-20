@@ -112,14 +112,14 @@ docker run -p 6379:6379 redis
 
 ### Backend
 
-cd backend
-mvnw spring-boot:run
+- cd backend
+- mvnw spring-boot:run
 
 ### Frontend
 
-cd frontend
-npm install
-npm run dev
+- cd frontend
+- npm install
+- npm run dev
 
 ---
 

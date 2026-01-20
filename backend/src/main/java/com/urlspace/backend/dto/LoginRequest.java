@@ -1,4 +1,4 @@
-package com.urlspace.dto;
+package com.urlspace.backend.dto;
 
 import lombok.Data;
 
