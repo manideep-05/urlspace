@@ -12,7 +12,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/admin/alerts" element={<AdminAlerts />} />
+        <Route path="/admin/alerts" element={<AdminRoute><AdminAlerts /></AdminRoute>}/>
+
       </Routes>
     </BrowserRouter>
   );
