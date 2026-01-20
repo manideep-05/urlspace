@@ -10,11 +10,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // http
+        // .csrf(csrf -> csrf.disable())
+        // .authorizeHttpRequests(auth -> auth
+        // .requestMatchers("/auth/**", "/health").permitAll()
+        // .anyRequest().authenticated());
+
+        // Add JwtFilter before processing requests
+
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/health").permitAll()
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+                .addFilterBefore(new JwtFilter(),
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
