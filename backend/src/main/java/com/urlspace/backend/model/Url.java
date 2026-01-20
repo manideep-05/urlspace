@@ -17,4 +17,9 @@ public class Url {
     private String shortCode;
     private String longUrl;
     private Long userId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }

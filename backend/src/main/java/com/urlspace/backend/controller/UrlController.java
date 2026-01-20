@@ -2,16 +2,20 @@ package com.urlspace.backend.controller;
 
 import com.urlspace.backend.dto.ShortenRequest;
 import com.urlspace.backend.model.Url;
+import com.urlspace.backend.model.User;
 import com.urlspace.backend.repository.UrlRepository;
+import com.urlspace.backend.repository.UserRepository;
 import com.urlspace.backend.service.AnalyticsService;
 import com.urlspace.backend.service.RateLimiterService;
 import com.urlspace.backend.service.UrlService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -25,12 +29,13 @@ public class UrlController {
 
     private final UrlRepository urlRepository;
     private final UrlService urlService;
+    private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final RateLimiterService rateLimiterService;
     private final AnalyticsService analyticsService;
 
     @PostMapping("/shorten")
-    public String shorten(@RequestBody ShortenRequest request, HttpServletRequest httpRequest) {
+    public String shorten(@Valid @RequestBody ShortenRequest request, HttpServletRequest httpRequest) {
 
         String email = (String) httpRequest.getAttribute("email");
 
@@ -41,6 +46,13 @@ public class UrlController {
         }
 
         String shortCode = urlService.generateShortCode();
+        User user = userRepository.findByEmail(email).orElseThrow();
+
+        Optional<Url> existing = urlRepository.findByUserAndLongUrl(user, request.getLongUrl());
+
+        if (existing.isPresent()) {
+            shortCode = existing.get().getShortCode();
+        }
 
         Url url = Url.builder()
                 .shortCode(shortCode)
@@ -80,6 +92,7 @@ public class UrlController {
     @GetMapping("/my")
     public List<Url> myUrls(HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
-        return urlRepository.findAll(); // later filter by user
+        User user = userRepository.findByEmail(email).orElseThrow();
+        return urlRepository.findByUser(user);
     }
 }

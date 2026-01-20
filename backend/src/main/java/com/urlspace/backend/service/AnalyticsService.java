@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.urlspace.backend.model.TrafficAlert;
@@ -23,6 +24,7 @@ public class AnalyticsService {
 
     private static final int ALERT_THRESHOLD = 5;
 
+    @Async
     public void logClick(String shortCode, String ip) {
 
         String rateKey = "clicks:" + shortCode;
