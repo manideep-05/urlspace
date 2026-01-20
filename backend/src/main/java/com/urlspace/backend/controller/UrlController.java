@@ -39,29 +39,17 @@ public class UrlController {
 
         String email = (String) httpRequest.getAttribute("email");
 
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         if (!rateLimiterService.isAllowed(email)) {
             // throw new RuntimeException("Rate limit exceeded. Try again later.");
             throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Rate limit exceeded");
 
         }
 
-        String shortCode = urlService.generateShortCode();
-        User user = userRepository.findByEmail(email).orElseThrow();
-
-        Optional<Url> existing = urlRepository.findByUserAndLongUrl(user, request.getLongUrl());
-
-        if (existing.isPresent()) {
-            shortCode = existing.get().getShortCode();
-        }
-
-        Url url = Url.builder()
-                .shortCode(shortCode)
-                .longUrl(request.getLongUrl())
-                // .userId(1L) // Placeholder for user ID
-                .userId(request.getUserId())
-                .build();
-
-        urlRepository.save(url);
+        Url url = urlService.createShortUrl(user, request.getLongUrl());
+        String shortCode = url.getShortCode();
 
         return "Short URL: http://localhost:9090/" + shortCode;
     }

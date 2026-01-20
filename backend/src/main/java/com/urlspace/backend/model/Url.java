@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "urls", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "shortCode")
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
