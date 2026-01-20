@@ -12,6 +12,8 @@ import com.urlspace.backend.repository.UrlRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Service
+@RequiredArgsConstructor
 public class UrlService {
 
     private static final String CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -54,6 +56,12 @@ public class UrlService {
             try {
                 return urlRepository.save(url);
             } catch (DataIntegrityViolationException ex) {
+                // Case 1: same user + same longUrl (idempotency collision)
+                Optional<Url> retryExisting = urlRepository.findByUserAndLongUrl(user, longUrl);
+
+                if (retryExisting.isPresent()) {
+                    return retryExisting.get();
+                }
                 // ⚠️ Collision happened → retry
                 attempts++;
             }
